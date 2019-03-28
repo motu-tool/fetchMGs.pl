@@ -2,6 +2,10 @@
 echo -e "\nfetchMGs retrieves sequences homologous to 40 universal marker genes"
 echo -e "from a fasta formatted file with protein coding sequences.\n"
 
+# Extract example data
+echo -e "Extracting sequence files.\n"
+gunzip example_datasets/*.f*a.gz
+
 # Run fethMG on metagenome examples
 echo -e "Running fetchMGs on metagenomic genes"
 ./fetchMGs.pl -m extraction -o example_output_metagenome example_datasets/example_data.faa -t 8
