@@ -6,7 +6,7 @@
 
 
 fetchMGs is copyright (c) 2019 Shinichi Sunagawa and Daniel R Mende
-fetchMG is released under the GNU General Public Licence v3.
+fetchMGs is released under the GNU General Public Licence v3.
 Please see http://www.gnu.org/licenses/gpl.html and the seperately provided LICENSE file.
 
 
@@ -111,5 +111,5 @@ The fetchMGs script requires the seqtk and HMMer3 executables.
 These software are (c) respecitve authors, and have been installed
 in the bin folder, within the fetchMG folder.
 
-HMMer3:            http://hmmer.janelia.org/
-seqtk:		   https://github.com/lh3/seqtk
+HMMer3: http://hmmer.janelia.org/
+seqtk: https://github.com/lh3/seqtk
