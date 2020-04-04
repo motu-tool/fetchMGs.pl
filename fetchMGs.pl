@@ -22,6 +22,7 @@ Usage
 Extraction mode
        ./fetchMGs.pl [options] -m extraction <protein sequences> 
            <protein sequences>           Multi-FASTA file with protein sequences from which universal single-copy marker genes should be extracted
+           -c|og_used                    Orthologous group id to be extracted; example: \'COG0012\'; default = \'all\'
            -o|outdir                     Output directory; default = \'output\'
            -b|bitscore                   Path to bitscore cutoff file; 
                                            default = \'\$pathInWhichThisScriptResides/lib/MG_BitScoreCutoffs.[allhits|verybesthit].txt\' (depending on -v option)
@@ -30,12 +31,13 @@ Extraction mode
            -p|protein_only               Set if nucleotide sequences file for <protein sequences> is not available
            -d|dnaFastaFile               Multi-FASTA file with nucleotide sequences file for <protein sequences>; 
 		                                   not neccesary if protein and nucleotide fasta file have the same name except .faa and .fna suffixes
-           -v|verybesthit_only           Only extract the best hit to each OG from each genome. 
-		                                   Recommended to use, if extracting sequences from reference genomes. 
-                                           Please do not use for metagenomes.
-                                           If this option is set fasta identifiers should be in the form: taxID.geneID and,
-                                           if needed have \' project_id=XXX\' somewhere in the header
-           -c|og_used                    Orthologous group id to be extracted; example: \'COG0012\'; default = \'all\'
+           -v|verybesthit_only               Only extract the best hit of each OG from each genome.
+                                                  Recommended to use, if extracting sequences from multiple reference genomes in the same file.
+                                                  Do not use it for metagenomes.
+                                                  If this option is set fasta identifiers should be in the form: taxID.geneID and, if needed, have 'project_id=XXX' in the header.
+                                                  Alternatively, set -i to ignore the headers. Then, the best hit of each OG in the whole input file will be selected, regardless of the headers used.
+           -i|ignore_headers                 If this option is set in addition to -v, the best hit of each COG will be selected.
+                                                  Recommended to use, if extracting sequences from a single genome in the same file.
            -t|threads                    Number of processors/threads to be used
            -x|executables                Path to executables used by this script (hmmsearch; seqtk). 
 		                                   default = \'\$pathInWhichThisScriptResides/bin\' 
@@ -65,6 +67,7 @@ my $outdir                  = "DEFAULT";
 my $cutoff_file             = "DEFAULT";
 my $protein_only            = 0;
 my $besthit_only            = 0;
+my $ignoreheaders           = 0;
 my $intProcessorNumber      = 1;
 my $floatMin                = 60;
 my $manual                  = 0;
@@ -92,6 +95,7 @@ GetOptions(
 	'b|bitscore=s'			=> \$cutoff_file,
 	'p|protein_only'		=> \$protein_only,
 	'v|verybesthit_only'	=> \$besthit_only,
+        'i|ignore_headers'      => \$ignoreheaders,
 	't|threads=i'			=> \$intProcessorNumber,
 	'd|dnaFastaFile=s'		=> \$strDNAFastaFileName,
 	'x|executables=s'		=> \$bin
@@ -206,7 +210,7 @@ if ( ( $mode eq "extraction" ) || ( $mode eq "calibration" ) ) {
 
 print "
 ===================================================================================
-         FetchMGs v1.1 - extraction of marker genes from protein sequences
+         FetchMGs v1.2 - extraction of marker genes from protein sequences
           Copyright (c) 2019 Shinichi Sunagawa, Daniel R Mende
 ===================================================================================
 
@@ -473,7 +477,12 @@ sub filterResultsArray_besthitAmongGenomes {
 	for my $i ( 0 .. $#arrAllResults ) {
 
 		my $strQueryId      = $arrAllResults[$i][0];
-		my $strTaxProjectID = $arrAllResults[$i][1];
+# EDIT
+		my $strTaxProjectID;
+		if ( $ignoreheaders ) {
+		    $strTaxProjectID = "X" }else{
+			$strTaxProjectID = $arrAllResults[$i][1];
+		    }
 		my $strCOGid        = $arrAllResults[$i][2];
 		my $floatBitscore   = $arrAllResults[$i][3];
 

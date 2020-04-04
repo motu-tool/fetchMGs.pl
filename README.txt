@@ -1,6 +1,6 @@
 
 ===============
- fetchMGs v 1.1 
+ fetchMGs v 1.2 
 ===============
 
 
@@ -82,19 +82,28 @@ Usage
        fetchMGs.pl -m|mode <extraction|calibration> [OPTIONS]
 
 Extraction mode
-       ./fetchMGs.pl -m extraction <protein sequences> [optional options]
-           <protein sequences>               Multi-FASTA file with protein sequences from which marker genes should be extracted
-           -c|og_used                        Orthologous group id to be extracted; example: 'COG0012'; default = 'all'
-           -o|outdir                         Output directory; default = 'output'
-           -h|hmmdir                         Path to directory that contains hmm models; default = './lib'
-           -b|bitscore                       Path to bitscore cutoff file; default = 'lib/MG_BitScoreCutoffs.defaults.txt'
-           -p|protein_only                   Set if nucleotide sequences for filename.faa is not available
-           -v|verybesthit_only               Recommended to use, if extracting sequences from reference genomes.
-                                               For this fasta identifiers should be in the form: taxID.geneID and,
-                                               if needed have ' project_id=XXX' somewhere in the header
-           -t|threads                        Number of processors/threads to be used
-           -d|dnaFastaFile                   Fasta file with DNA sequences of the same genes; not neccesary if protein file and dna file have the same with .faa and .fna suffixes
-           -x|xbin                           Path to binaries used by this script. default = '' --> will search for variables in $PATH
+       ./fetchMGs.pl [options] -m extraction <protein sequences>
+           <protein sequences>           Multi-FASTA file with protein sequences from which universal single-copy marker genes should be extracted
+           -c|og_used                    Orthologous group id to be extracted; example: \'COG0012\'; default = \'all\'
+           -o|outdir                     Output directory; default = \'output\'
+           -b|bitscore                   Path to bitscore cutoff file;
+                                           Default = \'\$pathInWhichThisScriptResides/lib/MG_BitScoreCutoffs.[allhits|verybesthit].txt\' (depending on -v option)
+           -l|library                    Path to directory that contains hmm models;
+                                           default = \'\$pathInWhichThisScriptResides/lib\'
+           -p|protein_only               Set if nucleotide sequences file for <protein sequences> is not available
+           -d|dnaFastaFile               Multi-FASTA file with nucleotide sequences file for <protein sequences>;
+                                                   not neccesary if protein and nucleotide fasta file have the same name except .faa and .fna suffixes
+           -v|verybesthit_only               Only extract the best hit of each OG from each genome.
+                                                  Recommended to use, if extracting sequences from multiple reference genomes in the same file.
+                                                  Do not use it for metagenomes.
+                                                  If this option is set fasta identifiers should be in the form: taxID.geneID and, if needed, have 'project_id=XXX' in the header.
+                                                  Alternatively, set -i to ignore the headers. Then, the best hit of each OG in the whole input file will be selected, regardless of the headers used.
+           -i|ignore_headers                 If this option is set in addition to -v, the best hit of each COG will be selected.
+                                                  Recommended to use, if extracting sequences from a single genome in the same file.
+           -t|threads                    Number of processors/threads to be used
+           -x|executables                Path to executables used by this script (hmmsearch; seqtk).
+                                                   default = \'\$pathInWhichThisScriptResides/bin\'
+                                                   If set to \'\' will search for executables in \$PATH
 
 Calibration mode
        ./fetchMGs.pl -m calibration <reference protein sequences> <true positives map>
